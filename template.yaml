@@ -1,0 +1,54 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: LaiD meal planner API
+Parameters:
+  FrontendOrigin:
+    Type: String
+    Default: http://localhost:5173
+Resources:
+  PlansTable:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: id
+        Type: String
+  PlannerApi:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      CorsConfiguration:
+        AllowOrigins: [!Ref FrontendOrigin]
+        AllowMethods: [GET, POST, OPTIONS]
+        AllowHeaders: [Content-Type]
+  PlannerFunction:
+    Type: AWS::Serverless::Function
+    Metadata:
+      BuildMethod: makefile
+    Properties:
+      Runtime: python3.12
+      Handler: handler.lambda_handler
+      CodeUri: .
+      Timeout: 10
+      Environment:
+        Variables:
+          PLANS_TABLE: !Ref PlansTable
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action: dynamodb:PutItem
+              Resource: !GetAtt PlansTable.Arn
+      Events:
+        Plans:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref PlannerApi
+            Path: /api/plans
+            Method: POST
+        Health:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref PlannerApi
+            Path: /api/health
+            Method: GET
+Outputs:
+  ApiUrl:
+    Value: !Sub 'https://${PlannerApi}.execute-api.${AWS::Region}.${AWS::URLSuffix}'
