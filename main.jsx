@@ -71,6 +71,16 @@ function App() {
           </React.Fragment>)}</dl>
         </article>)}
       </div>
+      {plan.groceries?.length > 0 && <fieldset style={{ marginTop: '1.5rem', borderRadius: '12px' }}>
+        <legend>Grocery checklist</legend>
+        <p className="hint">Core ingredients for this plan. Check off what you already have.</p>
+        <div className="fields">
+          {plan.groceries.map(ingredient => <label key={ingredient}>
+            <input type="checkbox" style={{ width: 'auto', marginRight: '0.5rem' }} />
+            {ingredient}
+          </label>)}
+        </div>
+      </fieldset>}
     </section>}
   </main>;
 }
