@@ -2,6 +2,14 @@
 
 LaiD is a rebuild of a project I made as an undergraduate. It turns a dietary preference into a few days of meal ideas and calculates adult BMI alongside the plan.
 
+## The original LaiD project
+
+Sheershak and I built the first version of LaiD as an undergraduate project around 2022. We wanted to see whether a program could take someone’s dietary preferences and body measurements and turn them into a weekly meal plan. Our paper describes the approach and shows an example week of breakfasts, lunches, and dinners.
+
+The paper is what I still have from that project. The React and Flask code in this repository is a later rebuild that lets you try the meal planner and generate a grocery checklist.
+
+[Read the original AI Dietician paper](https://drive.google.com/file/d/1QJSTYpC9eSPogkVF5r31D7mwvgweBlov/view)
+
 ## How it works
 
 ```mermaid
