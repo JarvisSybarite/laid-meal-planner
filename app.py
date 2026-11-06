@@ -32,6 +32,49 @@ MENUS = {
 }
 
 
+# Core ingredients for each meal, without quantities or pantry staples.
+INGREDIENTS = {
+    'Berry oats with oat milk': ('oats', 'berries', 'oat milk'),
+    'Chickpea cucumber bowl': ('chickpeas', 'cucumber', 'lemon'),
+    'Lentil tomato stew': ('lentils', 'tomatoes', 'onion'),
+    'Banana cinnamon porridge': ('banana', 'oats', 'cinnamon'),
+    'Black bean and rice bowl': ('black beans', 'rice', 'lime'),
+    'White bean vegetable soup': ('white beans', 'carrots', 'celery'),
+    'Apple overnight oats': ('apple', 'oats', 'oat milk'),
+    'Lentil quinoa salad': ('lentils', 'quinoa', 'lemon'),
+    'Roasted cauliflower and chickpea bowl': ('cauliflower', 'chickpeas', 'lemon'),
+    'Sweet potato breakfast hash': ('sweet potato', 'onion', 'bell peppers'),
+    'Tomato and white bean salad': ('tomatoes', 'white beans', 'lemon'),
+    'Black bean tacos with cabbage': ('black beans', 'tortillas', 'cabbage'),
+    'Pear and oat bowl': ('pear', 'oats', 'oat milk'),
+    'Roasted vegetable hummus plate': ('hummus', 'bell peppers', 'carrots'),
+    'Mushroom and barley stew': ('mushrooms', 'barley', 'onion'),
+    'Blueberry oat porridge': ('blueberries', 'oats', 'oat milk'),
+    'Potato and green bean salad': ('potatoes', 'green beans', 'lemon'),
+    'Chickpea spinach curry': ('chickpeas', 'spinach', 'curry powder'),
+    'Peach breakfast quinoa': ('peach', 'quinoa', 'oat milk'),
+    'Three-bean salad': ('chickpeas', 'white beans', 'black beans'),
+    'Lentil stuffed peppers': ('lentils', 'bell peppers', 'tomatoes'),
+    'Greek yogurt with berries': ('Greek yogurt', 'berries'),
+    'Lentil and feta salad': ('lentils', 'feta', 'lemon'),
+    'Spinach ricotta pasta': ('spinach', 'ricotta', 'pasta'),
+    'Egg and spinach toast': ('eggs', 'spinach', 'bread'),
+    'Chickpea and feta wrap': ('chickpeas', 'feta', 'tortillas'),
+    'Mushroom omelet with potatoes': ('mushrooms', 'eggs', 'potatoes'),
+    'Cottage cheese with peaches': ('cottage cheese', 'peach'),
+    'Roasted vegetable grain bowl': ('quinoa', 'bell peppers', 'carrots'),
+    'White bean and parmesan soup': ('white beans', 'vegetarian parmesan', 'celery'),
+    'Egg and avocado toast': ('eggs', 'avocado', 'bread'),
+    'Chicken and barley salad': ('chicken', 'barley', 'cucumber'),
+    'Salmon with potatoes and green beans': ('salmon', 'potatoes', 'green beans'),
+    'Yogurt with oats and berries': ('yogurt', 'oats', 'berries'),
+    'Turkey and vegetable wrap': ('turkey', 'tortillas', 'bell peppers'),
+    'Chicken and rice skillet': ('chicken', 'rice', 'onion'),
+    'Spinach scrambled eggs': ('spinach', 'eggs'),
+    'Tuna and white bean salad': ('tuna', 'white beans', 'lemon'),
+    'Roasted chicken with squash': ('chicken', 'squash', 'onion'),
+}
+
 def number(data, name, minimum, maximum):
     value = data.get(name)
     if (
@@ -55,13 +98,21 @@ def create_plan(data):
     if type(days) is not int or not 1 <= days <= 7:
         raise ValueError("Choose between 1 and 7 days.")
     menus = MENUS[diet] if diet == "vegan" else MENUS[diet] + MENUS["vegan"]
+    selected = menus[:days]
+    groceries = sorted({
+        ingredient
+        for meals in selected
+        for meal in meals
+        for ingredient in INGREDIENTS[meal]
+    }, key=str.casefold)
     return {
+        "groceries": groceries,
         "id": str(uuid4()),
         "bmi": round(weight / (height / 100) ** 2, 1),
         "diet": diet,
         "days": [
             dict(zip(("breakfast", "lunch", "dinner"), meals))
-            for meals in menus[:days]
+            for meals in selected
         ],
     }
 
